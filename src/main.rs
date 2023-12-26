@@ -22,6 +22,10 @@ async fn function_handler(_event: Request) -> Result<Response<Body>, Error> {
             let resp = Response::builder()
                 .status(200)
                 .header("content-type", "text/html")
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+                .header("Access-Control-Allow-Headers", "Content-Type")
+                .header("Access-Control-Allow-Credentials", "true")
                 .body(message.into())
                 .map_err(Box::new)?;
 
