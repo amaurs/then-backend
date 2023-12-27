@@ -3,6 +3,7 @@ extern crate chrono;
 use chrono::{DateTime, Utc};
 use lambda_http::{run, service_fn, Body, Error, Request, Response};
 use std::env;
+use serde_json::json;
 
 fn days_elapsed_from_timestamp(timestamp: i64) -> i64 {
     let timestamp_datetime: DateTime<Utc> = DateTime::from_timestamp(timestamp, 0).unwrap();
@@ -21,12 +22,14 @@ async fn function_handler(_event: Request) -> Result<Response<Body>, Error> {
 
             let resp = Response::builder()
                 .status(200)
-                .header("content-type", "text/html")
+                .header("content-type", "application/json")
                 .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-                .header("Access-Control-Allow-Headers", "Content-Type")
-                .header("Access-Control-Allow-Credentials", "true")
-                .body(message.into())
+                .header("Access-Control-Allow-Methods", "GET,OPTIONS")
+                .header("Access-Control-Allow-Headers", "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent")
+                .body(
+                    json!({
+            "message": message,
+          }).to_string().into())
                 .map_err(Box::new)?;
 
             Ok(resp)
