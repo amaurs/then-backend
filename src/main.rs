@@ -1,34 +1,20 @@
 extern crate chrono;
 
-use chrono::{DateTime, FixedOffset, NaiveDateTime, TimeZone, Utc};
+use chrono::{FixedOffset, Utc};
 use lambda_http::{run, service_fn, Body, Error, Request, Response};
 use std::env;
 use serde_json::json;
-
-fn days_elapsed_from_timestamp(timestamp: i64) -> (bool, i64) {
-    let hour = 3600;
-    let offset = FixedOffset::east_opt(8 * hour).unwrap();
-    let naive = NaiveDateTime::from_timestamp_opt(timestamp, 0).unwrap();
-    let timestamp_datetime: DateTime<FixedOffset> = offset.from_utc_datetime(&naive);
-    let current_datetime_naive: NaiveDateTime = Utc::now().naive_utc();
-    let current_datetime: DateTime<FixedOffset> = offset.from_utc_datetime(&current_datetime_naive);
-    let duration = current_datetime.signed_duration_since(timestamp_datetime);
-    let days_elapsed = duration.num_days();
-
-    (current_datetime.date_naive() == timestamp_datetime.date_naive() && current_datetime.time() == timestamp_datetime.time(), days_elapsed)
-}
-
-
+use then_backend::days_elapsed_between_timestamps;
 
 async fn function_handler(_event: Request) -> Result<Response<Body>, Error> {
     if let Ok(raw_timestamp) = env::var("TIMESTAMP") {
         if let Ok(timestamp) = raw_timestamp.parse::<i64>() {
-            let (is_before, days_elapsed) = days_elapsed_from_timestamp(timestamp);
+            let (is_before, days_elapsed) = days_elapsed_between_timestamps(timestamp, Utc::now().timestamp(), FixedOffset::west_opt(8 * 3600).unwrap());
 
             let message = if is_before {
-                format!("Flora will be {} days old today.", days_elapsed)
+                format!("Flora Clementina will be {} days old today.", days_elapsed + 1)
             } else {
-                format!("Flora is {} days old today.", days_elapsed)
+                format!("Flora Clementina is {} days old.", days_elapsed)
             };
 
 
