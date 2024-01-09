@@ -13,3 +13,6 @@ tokio = { version = "1", features = ["macros"] }
 tracing = { version = "0.1", features = ["log"] }
 tracing-subscriber = { version = "0.3", default-features = false, features = ["fmt"] }
 serde_json = "1.0.108"
+image = "0.24.7"
+base64 = "0.20.0"
+regex = "1.10.2"
