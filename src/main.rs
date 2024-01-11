@@ -157,10 +157,7 @@ async fn fractal<F>(request: Request, x: i32, y: i32, z: i32, escape_time: F) ->
         .header("Access-Control-Allow-Origin", "*")
         .header("Access-Control-Allow-Methods", "GET,OPTIONS")
         .header("Access-Control-Allow-Headers", "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent")
-        .body(
-            json!({
-            "imageBase64": base64_encoded,
-          }).to_string().into())
+        .body(Body::Binary(base64_encoded.into_bytes()))
         .map_err(Box::new)?)
 }
 
